@@ -1,0 +1,55 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_name:
+        description: 'Build name / version (optional, e.g. 1.0.0)'
+        required: false
+        default: ''
+      build_number:
+        description: 'Build number (optional, e.g. 1)'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: |
+          BUILD_ARGS=""
+          if [ ! -z "${{ github.event.inputs.build_name }}" ]; then
+            BUILD_ARGS="$BUILD_ARGS --build-name=${{ github.event.inputs.build_name }}"
+          fi
+          if [ ! -z "${{ github.event.inputs.build_number }}" ]; then
+            BUILD_ARGS="$BUILD_ARGS --build-number=${{ github.event.inputs.build_number }}"
+          fi
+          flutter build apk --release $BUILD_ARGS
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/*.apk
