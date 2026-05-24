@@ -27,7 +27,7 @@ class AppTheme {
         onSecondary: Colors.white,
         onSurface: textPrimary,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -38,7 +38,7 @@ class AppTheme {
           ),
         ),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: surfaceColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
